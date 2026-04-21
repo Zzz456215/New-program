@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>河南5A景点攻略</title>
+    <!-- 引入 jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <style>
+        /* ===== 全局重置 & 滚动吸附 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            font-family: "Microsoft YaHei", "SimHei", sans-serif;
+        }
+
+        body {
+            scroll-snap-type: y mandatory;
+            background-color: #1a2a1f;
+        }
+
+        .fullscreen-section {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ---------- 图一：抽屉卡片轮播区 ---------- */
+        .section-1 {
+            background-image: url(./A2.jpg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #main {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #click-section {
+            width: 35%;
+            height: 100%;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        #drawerboxes {
+            margin-left: 10%;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        #drawerboxes::before {
+            content: "";
+            width: 8px;
+            height: 94%;
+            position: absolute;
+            left: -10px;
+            top: 3%;
+            z-index: 120;
+        }
+
+        .drawerbox {
+            height: calc(100% / 5.5);
+            width: 70%;
+            position: relative;
+            z-index: 100;
+            transform: translateX(-70%);
+            transition: transform .5s ease-in-out;
+        }
+
+        .drawerbox.active {
+            transform: translateX(0);
+        }
+
+        .drawer-btn {
+            width: 100%;
+            height: 100%;
+            font: 600 24px '';
+            background-color: #c8d7b4;
+            border: none;
+            transition: background-color .5s ease-in-out;
+            color: #ffffff00;
+            cursor: pointer;
+            outline: none;
+            position: relative;
+        }
+
+        .drawer-btn.active {
+            background-image: url(./A1.jpg);
+            background-size: cover;
+            color: #87a368;
+        }
+
+        .drawer-head {
+            position: absolute;
+            color: rgb(255, 255, 255);
+            font-size: 150px;
+            font-weight: 700;
+            right: -38px;
+            top: calc(50% - 120px);
+            text-shadow: 2px -1px 8px rgba(250, 80, 193, 0.323);
+            pointer-events: none;
+        }
+
+        #slide-section {
+            position: relative;
+            height: 100%;
+            width: 65%;
+            display: flex;
+            justify-content: center;
+            padding: 0 40px;
+            background: linear-gradient(to right bottom,
+                rgba(255, 255, 255, .6),
+                rgba(255, 255, 255, .3),
+                rgba(255, 255, 255, .2));
+            backdrop-filter: blur(11px);
+        }
+
+        #slide-bar {
+            position: absolute;
+            top: 10%;
+            left: 40px;
+            height: 80%;
+            width: 1px;
+            background-color: rgb(223, 223, 223);
+        }
+
+        #bar {
+            position: absolute;
+            height: calc(100% / 4);
+            width: 5px;
+            top: 0;
+            left: -1.2px;
+            background-color: rgb(227, 255, 175);
+            transition: transform .5s ease-in-out;
+        }
+
+        #card-section {
+            height: 100%;
+            width: 80%;
+            overflow: hidden;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 10% 0;
+            color: white;
+            font-size: 30px;
+            transition: transform .5s ease-in-out;
+        }
+
+        .card-small-title {
+            font-size: 20px;
+            font-weight: 600;
+            padding-bottom: min(5%, 10px);
+            color: #739353;
+        }
+
+        .card-title {
+            font-size: 40px;
+            font-weight: 700;
+            padding-bottom: min(20%, 40px);
+            color: #739353;
+        }
+
+        .card-content {
+            font-size: 16px;
+            font-weight: 400;
+            color: #87a368;
+            margin-bottom: 60px;
+        }
+
+        .card-img {
+            width: 100%;
+            max-height: 400px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-img video {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* ---------- 图二：时间轴全屏区 (修复版) ---------- */
+        .section-2 {
+            background-color: #0f1a0c;
+            overflow-y: auto !important;
+            height: 100vh;
+            position: relative;
+        }
+
+        .shell {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            padding: 80px 0;
+            transition: 0.3s ease;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 遮罩层 - 确保背景图有模糊效果但不影响文字清晰度 */
+        .shell:before {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            content: "";
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 添加背景模糊效果 */
+        .shell:after {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            content: "";
+            z-index: 0;
+            pointer-events: none;
+            backdrop-filter: blur(3px);
+        }
+
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            color: #fff;
+            font-size: 46px;
+            font-weight: normal;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            letter-spacing: 5px;
+            margin: 10px 0 0 0;
+            font-weight: normal;
+        }
+
+        .timeline {
+            display: flex;
+            margin: 0 auto;
+            flex-direction: column;
+            flex-wrap: wrap;
+            max-width: 700px;
+            position: relative;
+            z-index: 2;
+            padding-bottom: 40px;
+        }
+
+        .timeline:before {
+            position: absolute;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            margin-left: -1px;
+            content: "";
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .item {
+            padding: 40px 0;
+            opacity: 0.3;
+            filter: blur(2px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            width: calc(50% - 40px);
+            display: flex;
+            position: relative;
+            transform: translateY(-80px);
+        }
+
+        .item:before {
+            content: attr(date-text);
+            width: 100%;
+            position: absolute;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 20px;
+            font-weight: 700;
+            border-left: 2px solid rgba(255, 255, 255, 0.7);
+            top: 70%;
+            margin-top: -5px;
+            padding-left: 15px;
+            opacity: 0;
+            right: calc(-100% - 56px);
+            letter-spacing: 5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+        }
+
+        .item:nth-child(even) {
+            align-self: flex-end;
+        }
+
+        .item:nth-child(even):before {
+            right: auto;
+            text-align: right;
+            left: calc(-100% - 56px);
+            padding-left: 0;
+            border-left: none;
+            border-right: 2px solid rgba(255, 255, 255, 0.7);
+            padding-right: 15px;
+        }
+
+        .item--active {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0px);
+        }
+
+        .item--active:before {
+            top: 50%;
+            opacity: 1;
+        }
+
+        .item--active .content-title {
+            margin: -50px 0 20px 0;
+        }
+
+        .content {
+            width: 100%;
+            position: relative;
+            z-index: 3;
+        }
+
+        .content-title {
+            font-weight: 700;
+            font-size: 66px;
+            margin: -10px 0 0 0;
+            transition: all 0.4s ease;
+            padding: 0 10px;
+            box-sizing: border-box;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+        }
+
+        .content-desc {
+            margin: 0;
+            font-size: 16px;
+            box-sizing: border-box;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 28px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            max-width: 100%;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* 响应式 */
+        @media only screen and (max-width: 767px) {
+            .item {
+                align-self: baseline !important;
+                width: 100%;
+                padding: 0 30px 150px 80px;
+            }
+            .item:before {
+                left: 10px !important;
+                padding: 0 !important;
+                top: 50px;
+                text-align: center !important;
+                width: 60px;
+                border: none !important;
+            }
+            .item:last-child {
+                padding-bottom: 40px;
+            }
+            .timeline:before {
+                left: 40px;
+            }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #87a368;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== 第一屏：抽屉轮播 (图一) ========== -->
+    <section class="fullscreen-section section-1">
+        <div id="main">
+            <div id="click-section">
+                <div id="drawerboxes">
+                    <div class="drawerbox active">
+                        <button class="drawer-btn active" onclick="slideTo(1)">嵩山少林景区<span class="drawer-head">1</span></button>
+                    </div>
+                    <div class="drawerbox">
+                        <button class="drawer-btn" onclick="slideTo(2)">清明上河园景区<span class="drawer-head">2</span></button>
+                    </div>
+                    <div class="drawerbox">
+                        <button class="drawer-btn" onclick="slideTo(3)">龙门石窟<span class="drawer-head">3</span></button>
+                    </div>
+                    <div class="drawerbox">
+                        <button class="drawer-btn" onclick="slideTo(4)">宝泉旅游区<span class="drawer-head">4</span></button>
+                    </div>
+                </div>
+            </div>
+            <div id="slide-section">
+                <div id="slide-bar">
+                    <div id="bar"></div>
+                </div>
+                <div id="card-section">
+                    <div id="card1" class="card">
+                        <div class="card-small-title">郑州</div>
+                        <div class="card-title">嵩山少林景区</div>
+                        <div class="card-content">中岳嵩山雄峙中原，少林古刹梵音悠远。作为禅宗祖庭与中华武术发源地，这里古塔林立、武韵铿锵，晨钟暮鼓间尽显禅武合一的千年底蕴，是领略中华功夫与佛教文化的胜地。</div>
+                        <div class="card-img">
+                            <video src="少林寺.mp4" controls autoplay muted loop width="700"></video>
+                        </div>
+                    </div>
+                    <div id="card2" class="card">
+                        <div class="card-small-title">开封</div>
+                        <div class="card-title">清明上河园景区</div>
+                        <div class="card-content">依《清明上河图》复刻还原，一朝步入画卷，一日梦回千年。汴河游船、市井街巷、宋韵演艺交织，再现北宋东京的繁华盛景，沉浸式体验大宋民俗风情，宛若穿越古今繁华。</div>
+                        <div class="card-img">
+                            <video src="清明上河园.mp4" controls autoplay muted loop width="800"></video>
+                        </div>
+                    </div>
+                    <div id="card3" class="card">
+                        <div class="card-small-title">洛阳</div>
+                        <div class="card-title">龙门石窟</div>
+                        <div class="card-content">伊水蜿蜒，两山对峙，石窟造像依山而凿。自北魏至盛唐，十万余尊佛像镌刻岁月风华，卢舍那大佛端庄慈祥，尽显东方石刻艺术巅峰造诣，是承载千年历史的石刻艺术宝库。</div>
+                        <div class="card-img">
+                            <video src="龙门石窟.mp4" controls autoplay muted loop width="800"></video>
+                        </div>
+                    </div>
+                    <div id="card4" class="card">
+                        <div class="card-small-title">新乡</div>
+                        <div class="card-title">宝泉旅游区</div>
+                        <div class="card-content">太行深处碧水丹山相依，飞瀑流泉纵横其间。峡谷险峻、潭水澄澈，四季景致各有风韵，春有繁花夏有清潭，是藏于太行的山水秘境，尽享自然灵秀与休闲野趣。</div>
+                        <div class="card-img">
+                            <video src="宝泉旅游区.mp4" controls autoplay muted loop width="800"></video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 第二屏：时间轴盘点 (图二 - 修复版) ========== -->
+    <section class="fullscreen-section section-2">
+        <div class="shell" id="shell">
+            <div class="header">
+                <h2 class="title">河南5A景点盘点</h2>
+                <h3 class="subtitle">时间轴 · 滚动即现</h3>
+            </div>
+            <div class="timeline">
+                <div class="item" date-text="嵩山少林景区">
+                    <div class="content">
+                        <img src="./1.jpg" alt="嵩山少林景区" class="img">
+                        <h2 class="content-title">2007</h2>
+                        <p class="content-desc">登中岳嵩山，访禅宗祖庭，领略少林功夫传奇</p>
+                    </div>
+                </div>
+                <div class="item" date-text="龙门石窟">
+                    <div class="content">
+                        <img src="./2.jpg" alt="龙门石窟" class="img">
+                        <h2 class="content-title">2007</h2>
+                        <p class="content-desc">观北魏石刻瑰宝，拜卢舍那大佛，品世界遗产魅力</p>
+                    </div>
+                </div>
+                <div class="item" date-text="云台山-神农山-青天河">
+                    <div class="content">
+                        <img src="./3.jpg" alt="云台山-神农山-青天河风景区" class="img">
+                        <h2 class="content-title">2007</h2>
+                        <p class="content-desc">揽太行山水盛景，赏丹霞瀑布，赴自然之约</p>
+                    </div>
+                </div>
+                <div class="item" date-text="殷墟景区">
+                    <div class="content">
+                        <img src="./4.jpg" alt="殷墟景区" class="img">
+                        <h2 class="content-title">2011</h2>
+                        <p class="content-desc">探秘商代古都，寻迹甲骨文字，触摸华夏文明根脉</p>
+                    </div>
+                </div>
+                <div class="item" date-text="白云山景区">
+                    <div class="content">
+                        <img src="./5.jpg" alt="白云山景区" class="img">
+                        <h2 class="content-title">2011</h2>
+                        <p class="content-desc">深陷伏牛山秘境，观云海翻涌，享天然森林氧吧</p>
+                    </div>
+                </div>
+                <div class="item" date-text="清明上河园景区">
+                    <div class="content">
+                        <img src="./6.jpg" alt="清明上河园景区" class="img">
+                        <h2 class="content-title">2011</h2>
+                        <p class="content-desc">穿越千年宋都，游仿宋实景，沉浸式感受宋风雅韵</p>
+                    </div>
+                </div>
+                <div class="item" date-text="尧山-中原大佛景区">
+                    <div class="content">
+                        <img src="./7.jpg" alt="尧山-中原大佛景区" class="img">
+                        <h2 class="content-title">2011</h2>
+                        <p class="content-desc">赏中原独秀山色，瞻世界大佛，祈愿岁岁安康</p>
+                    </div>
+                </div>
+                <div class="item" date-text="老君山-鸡冠洞旅游区">
+                    <div class="content">
+                        <img src="./8.jpg" alt="老君山-鸡冠洞旅游区" class="img">
+                        <h2 class="content-title">2012</h2>
+                        <p class="content-desc">问道道教圣地，赏金顶云海，探奇幻喀斯特溶洞</p>
+                    </div>
+                </div>
+                <div class="item" date-text="龙潭大峡谷景区">
+                    <div class="content">
+                        <img src="./9.jpg" alt="龙潭大峡谷景区" class="img">
+                        <h2 class="content-title">2013</h2>
+                        <p class="content-desc">漫步黄河山水画廊，览红岩嶂谷，惊叹地质奇观</p>
+                    </div>
+                </div>
+                <div class="item" date-text="西峡恐龙遗迹园－伏牛山－老界岭">
+                    <div class="content">
+                        <img src="./10.jpg" alt="西峡恐龙遗迹园－伏牛山－老界岭旅游区" class="img">
+                        <h2 class="content-title">2014</h2>
+                        <p class="content-desc">寻恐龙遗迹，登伏牛主峰，享原生态风光</p>
+                    </div>
+                </div>
+                <div class="item" date-text="嵖岈山旅游景区">
+                    <div class="content">
+                        <img src="./11.jpg" alt="嵖岈山旅游景区" class="img">
+                        <h2 class="content-title">2015</h2>
+                        <p class="content-desc">赏中原盆景奇石，探花岗岩地貌，重温西游经典</p>
+                    </div>
+                </div>
+                <div class="item" date-text="红旗渠－太行大峡谷">
+                    <div class="content">
+                        <img src="./12.jpg" alt="红旗渠－太行大峡谷旅游景区" class="img">
+                        <h2 class="content-title">2016</h2>
+                        <p class="content-desc">感悟红色红旗渠精神，畅游壮美太行峡谷</p>
+                    </div>
+                </div>
+                <div class="item" date-text="芒砀山汉文化旅游景区">
+                    <div class="content">
+                        <img src="./13.jpg" alt="芒砀山汉文化旅游景区" class="img">
+                        <h2 class="content-title">2017</h2>
+                        <p class="content-desc">探寻汉墓遗存，品读汉文化，寻迹刘邦斩蛇传奇</p>
+                    </div>
+                </div>
+                <div class="item" date-text="八里沟景区">
+                    <div class="content">
+                        <img src="./14.jpg" alt="八里沟景区" class="img">
+                        <h2 class="content-title">2020</h2>
+                        <p class="content-desc">览太行山水精华，观瀑布奇石，感受太行之魂</p>
+                    </div>
+                </div>
+                <div class="item" date-text="鸡公山景区">
+                    <div class="content">
+                        <img src="./15.jpg" alt="鸡公山景区" class="img">
+                        <h2 class="content-title">2022</h2>
+                        <p class="content-desc">避暑胜地享清凉，赏万国建筑，观云海佛光奇景</p>
+                    </div>
+                </div>
+                <div class="item" date-text="太昊伏羲陵文化旅游区">
+                    <div class="content">
+                        <img src="./16.jpg" alt="太昊伏羲陵文化旅游区" class="img">
+                        <h2 class="content-title">2024</h2>
+                        <p class="content-desc">谒三皇之首伏羲，传承伏羲文化，览千年陵庙建筑群</p>
+                    </div>
+                </div>
+                <div class="item" date-text="宝泉旅游区">
+                    <div class="content">
+                        <img src="./17.jpg" alt="宝泉旅游区" class="img">
+                        <h2 class="content-title">2024</h2>
+                        <p class="content-desc">探秘太行秘境，赏峡谷飞瀑，打卡绝美崖上风光</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 图一轮播脚本 ===== -->
+    <script>
+        (function() {
+            let chosenSlideNumber = 1;
+            let offset = 0;
+            let barOffset = 0;
+            let intervalID;
+            
+            function startSlide() {
+                if (intervalID) clearInterval(intervalID);
+                intervalID = setInterval(() => {
+                    slideTo(chosenSlideNumber % 4 + 1);
+                }, 3000);
+            }
+
+            startSlide();
+
+            const drawerBtns = Array.from(document.querySelectorAll(".drawer-btn"));
+            drawerBtns.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    clearInterval(intervalID);
+                    startSlide();
+                });
+            });
+
+            const slideSection = document.querySelector("#slide-section");
+            slideSection.addEventListener("mouseenter", () => {
+                clearInterval(intervalID);
+            });
+            slideSection.addEventListener("mouseleave", () => {
+                startSlide();
+            });
+
+            window.slideTo = function(slideNumber) {
+                drawerboxToggle(slideNumber);
+                drawerbtnToggle(slideNumber);
+                let previousSlideNumber = chosenSlideNumber;
+                chosenSlideNumber = slideNumber;
+                offset += (chosenSlideNumber - previousSlideNumber) * (-100);
+                barOffset += (chosenSlideNumber - previousSlideNumber) * (100);
+                barSlide(barOffset);
+                const slides = document.querySelectorAll(".card");
+                Array.from(slides).forEach(slide => {
+                    slide.style.transform = `translateY(${offset}%)`;
+                });
+            };
+
+            function drawerboxToggle(drawerboxNumber) {
+                let prev = chosenSlideNumber;
+                const drawerboxes = document.querySelectorAll(".drawerbox");
+                if (drawerboxes[prev - 1]) drawerboxes[prev - 1].classList.toggle("active");
+                if (drawerboxes[drawerboxNumber - 1]) drawerboxes[drawerboxNumber - 1].classList.toggle("active");
+            }
+
+            function drawerbtnToggle(drawerBtnNumber) {
+                let prev = chosenSlideNumber;
+                const drawerBtns = document.querySelectorAll(".drawer-btn");
+                if (drawerBtns[prev - 1]) drawerBtns[prev - 1].classList.toggle("active");
+                if (drawerBtns[drawerBtnNumber - 1]) drawerBtns[drawerBtnNumber - 1].classList.toggle("active");
+            }
+
+            function barSlide(barOffset) {
+                const bar = document.querySelector("#bar");
+                bar.style.transform = `translateY(${barOffset}%)`;
+            }
+        })();
+    </script>
+
+    <!-- ===== 时间轴插件 (修复动画和背景模糊) ===== -->
+    <script>
+        (function ($) {
+            $.fn.timeline = function () {
+                var selectors = {
+                    id: $(this),
+                    item: $(this).find(".item"),
+                    activeClass: "item--active",
+                    img: ".img"
+                };
+
+                // 初始激活第一项
+                selectors.item.removeClass(selectors.activeClass);
+                selectors.item.eq(0).addClass(selectors.activeClass);
+                
+                // 设置初始背景
+                var firstImg = selectors.item.first().find(selectors.img).attr("src");
+                if (firstImg) {
+                    selectors.id.css("background-image", "url(" + firstImg + ")");
+                }
+
+                var scrollContainer = $('.section-2')[0];
+                
+                // 滚动处理
+                function handleScroll() {
+                    var scrollTop = scrollContainer.scrollTop;
+                    var containerHeight = scrollContainer.clientHeight;
+                    
+                    selectors.item.each(function (i) {
+                        var $item = $(this);
+                        var itemTop = $item[0].offsetTop;
+                        var itemHeight = $item.outerHeight();
+                        
+                        // 计算元素中心位置
+                        var itemCenter = itemTop + itemHeight / 2;
+                        var viewportCenter = scrollTop + containerHeight / 2;
+                        
+                        // 判断哪个元素最接近视口中心
+                        var distance = Math.abs(itemCenter - viewportCenter);
+                        
+                        // 存储距离用于比较
+                        $item.data('distance', distance);
+                    });
+                    
+                    // 找到最接近中心的元素
+                    var closestItem = selectors.item.eq(0);
+                    var minDistance = closestItem.data('distance');
+                    
+                    selectors.item.each(function () {
+                        var distance = $(this).data('distance');
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestItem = $(this);
+                        }
+                    });
+                    
+                    // 激活最接近的元素
+                    if (!closestItem.hasClass(selectors.activeClass)) {
+                        selectors.item.removeClass(selectors.activeClass);
+                        closestItem.addClass(selectors.activeClass);
+                        
+                        // 切换背景图
+                        var imgSrc = closestItem.find(selectors.img).attr("src");
+                        if (imgSrc) {
+                            selectors.id.css("background-image", "url(" + imgSrc + ")");
+                        }
+                    }
+                }
+
+                // 监听滚动
+                $(scrollContainer).on('scroll', handleScroll);
+                
+                // 立即执行一次确保初始状态正确
+                setTimeout(handleScroll, 50);
+            };
+        })(jQuery);
+
+        // 初始化
+        $(document).ready(function () {
+            $("#shell").timeline();
+            
+            // 手动触发一次激活，确保第一个元素有完整的动画效果
+            setTimeout(function() {
+                $('.section-2').trigger('scroll');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
