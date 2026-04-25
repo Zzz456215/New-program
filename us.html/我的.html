@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        /* 大图容器 */
+        .banner {
+            width: 100%;
+            height: 600px;
+            background: url(../素材包/D2.jpg) center/cover no-repeat;
+            position: relative;
+        }
+        /* 导航栏 */
+        .navbar {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .navbar .title {
+            color: #f0f7e6;
+            top: 10;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 4px 4px 8px #1b3b1b;
+            text-align: center;
+            letter-spacing: 6px;
+            padding: 15px 0 0;
+        }
+        .navbar nav {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        .navbar nav a {
+            margin: 0 15px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ebf5e0;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: all 0.25s ease;
+            border-radius: 30px;
+            text-shadow: 1px 2px 3px #1a3a1a;
+            letter-spacing: 1.5px;
+        }
+        .navbar nav a.active {
+            color: #c8f0a2;
+            text-decoration: underline;
+            text-decoration-color: #b4e484;
+            text-underline-offset: 8px;
+            text-decoration-thickness: 2px;
+        }
+
+        .navbar nav a:hover {
+            color: #c8f0a2 ;
+        }
+
+        /* 图片上的文字 */
+        .banner-text {
+            position: absolute;
+            top: 50%;
+            left: 15%;
+            transform: translateY(-50%);
+            color: #fff;
+        }
+        .banner-text h1 {
+            font-size: 72px;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+        /* 下方文字区域 */
+        .about-section {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 2;
+            font-size: 17px;
+            color: #555;
+        }
+        .about-section h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .about-section p {
+            margin-bottom: 25px;
+            text-align: justify;
+            text-indent: 2em;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 大图 + 导航栏 在一起 -->
+<div class="banner">
+    <div class="navbar">
+        <div class="title">河南旅游指南</div>
+
+        <div class="navbar">
+        <nav>
+            <a href="/比赛/index.html/首页.html">首页</a>
+            <a href="/比赛/location.html/位置介绍.html">位置介绍</a>
+            <a href="/比赛/search.html/搜索栏.html" target="_blank">检索</a>
+            <a href="/比赛/other.html/attractions.html">其它</a>
+            <a href="/比赛/us.html/我的.html">关于我们</a>
+        </nav>
+    </div>
+    </div>
+
+    <!-- 图片上的文字 -->
+    <div class="banner-text">
+        <h1>我们<br>Us</h1>
+    </div>
+</div>
+
+<!-- 关于我们内容 -->
+<div class="about-section">
+    <h2>关于我们:</h2>
+    <p>河南，是一部写满文明的厚重典籍，是一片被时光温柔以待的中原沃土。这里有承载千年文脉的殷墟甲骨，有镌刻着盛唐气象的龙门石窟，有矗立在嵩山之巅的古刹钟声，也有散落于九座城市的17处国家5A级景区，每一处风景，都是这片土地献给世界的名片；每一座古建，都藏着中原大地的烟火与传奇。</p>
+    <p>我们四名青年，因一次课堂分享结缘，又因对家乡的共同热爱，组成了这个小小的团队。我们走遍家乡的街巷，翻遍历史的卷宗，看着那些被游客打卡、被岁月打磨的风景，忽然萌生了一个念头：我们要做一扇窗，一扇能让更多人看见河南、读懂河南的窗。</p>
+    <p>于是，我们以代码为笔，以热爱为墨，搭建起这个小小的网页。我们把17处5A景区的山光水色、人文底蕴一一梳理，也为那些暂时没有5A景区的城市，写下属于它们的建筑故事。我们想让更多人知道，河南不止有世人熟知的名山大川，还有开封的宋韵、安阳的殷商、信阳的茶香、周口的古韵，那些散落在中原大地的每一座建筑、每一处街巷，都藏着独属于河南的温柔与风骨。</p>
+    <p>我们深知，代码只是载体，热爱才是内核。我们希望，每一个点开这个网页的人，都能看见河南的山河壮阔，读懂中原的文化根脉；我们也希望，每一个河南的孩子，都能在这里找到家乡的骄傲，读懂这片土地的厚重与温柔。我们愿做微光，以少年之力，让更多人看见河南、爱上河南，让中原大地的故事，被更多人听见、读懂、铭记。</p>
+</div>
+
+</body>
+</html>

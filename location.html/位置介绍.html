@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>位置介绍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url(../素材包/background2.jpg);
+            background-repeat: no-repeat;
+            background-size: 100%;
+            opacity: 0.8;
+            font-family: 'Segoe UI', '微软雅黑', system-ui, sans-serif;
+            min-height: 100vh;
+            backdrop-filter: brightness(0.9);
+        }
+
+        :root {
+            --green-light: #e2f0d9;
+            --green-mid: #7fb07f;
+            --green-dark: #2d6a4f;
+            --green-soft: #b7d7a8;
+            --green-glass: rgba(40, 80, 40, 0.2);
+        }
+
+        .top {
+            color: #f0f7e6;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 4px 4px 8px #1b3b1b;
+            text-align: center;
+            letter-spacing: 6px;
+            padding: 15px 0 0;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(3px);
+            border-radius: 60px;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .navbar nav a {
+            margin: 0 15px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ebf5e0;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: all 0.25s ease;
+            border-radius: 30px;
+            text-shadow: 1px 2px 3px #1a3a1a;
+            letter-spacing: 1.5px;
+        }
+
+        .navbar nav a:hover {
+            color: #c8f0a2 !important;
+            text-decoration: underline;
+            text-decoration-color: #b4e484;
+            text-underline-offset: 8px;
+            text-decoration-thickness: 2px;
+            background-color: transparent !important;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px 30px;
+            gap: 20px;
+        }
+
+        /*左边*/
+        .map-container {
+            width: 50%;
+            min-width: 400px;
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+            pointer-events: none; /* 让点击穿透到标签，不影响悬浮 */
+        }
+
+        .city-label {
+            position: absolute;
+            color: #f1fce8;
+            font-size: 15px;
+            font-weight: bold;
+            text-shadow: 1px 2px 6px #0a2f0a, 0 0 4px #1b4b1b;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 30px;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            letter-spacing: 1px;
+            pointer-events: auto;
+            z-index: 5;
+        }
+
+        .city-label:hover {
+            background-color: rgba(50, 110, 40, 0.7);
+            color: #fdfff5;
+            font-size: 19px;
+            font-weight: 800;
+            border: 1.5px solid #d0f0b0;
+            box-shadow: 0 0 12px #b5e3a4;
+            text-shadow: 2px 2px 8px #062006;
+            transform: translate(-50%, -50%) scale(1.05);
+            z-index: 20;
+        }
+
+        /* 城市坐标 (原有坐标微调 + 新增济源) */
+        .label-zhengzhou { left: 54%; top: 32%; }
+        .label-kaifeng { left: 64%; top: 32%; }
+        .label-luoyang { left: 35%; top: 36%; }
+        .label-pingdingshan { left: 48%; top: 55%; }
+        .label-anyang { left: 65%; top: 7%; }
+        .label-hebi { left: 62%; top: 14%; }
+        .label-xinxiang { left: 57%; top: 23%; }
+        .label-jiaozuo { left: 47%; top: 24%; }
+        .label-puyang { left: 73%; top: 13%; }
+        .label-xuchang { left: 57%; top: 47%; }
+        .label-luohe { left: 59%; top: 57%; }
+        .label-sanmenxia { left: 11%; top: 38%; }
+        .label-nanyang { left: 37%; top: 68%; }
+        .label-shangqiu { left: 83%; top: 40%; }
+        .label-xinyang { left: 60%; top: 85%; }
+        .label-zhoukou { left: 70%; top: 56%; }
+        .label-zhumadian { left: 59%; top: 69%; }
+        /* 济源市 - 位于焦作西侧 */
+        .label-jiyuan { left: 38%; top: 22%; }
+
+        .info-card {
+            position: relative;
+            width: 45%;
+            min-width: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            min-height: 360px;
+            background: transparent;
+            backdrop-filter: blur(2px);
+            border-radius: 40px;
+            padding: 25px 20px;
+            margin: 20px auto;
+            border: 2.5px solid rgba(80, 140, 70, 0.7);
+            box-shadow: 0 15px 30px rgba(20, 70, 10, 0.3), inset 0 0 20px rgba(150, 220, 120, 0.1);
+            transition: all 0.3s;
+        }
+
+        #cityTitle {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 10px 0 20px;
+            letter-spacing: 3px;
+            word-break: keep-all;
+            padding-bottom: 12px;
+        }
+
+        .jieshao-city {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .jieshao-city-item {
+            background: rgba(40, 80, 30, 0.2);
+            backdrop-filter: blur(3px);
+            width: 90%;
+            margin: 0 auto;
+            padding: 14px 10px;
+            text-align: center;
+            border-radius: 50px;
+            border: 1px solid rgba(140, 210, 110, 0.5);
+            box-shadow: inset 0 2px 5px rgba(30, 70, 0, 0.1);
+            transition: 0.2s;
+        }
+
+        .jingqu {
+            font-size: 20px;
+            font-weight: 600;
+            display: block;
+            color: #e3ffc7;
+            text-shadow: 1px 2px 6px #0a330a;
+            letter-spacing: 2px;
+        }
+
+        .leixing {
+            font-size: 18px;
+            font-weight: 600;
+            color: #c7f0b2;
+            text-shadow: 1px 1px 3px #0a330a;
+        }
+
+        .didian {
+            font-size: 18px;
+            font-weight: 600;
+            color: #d1f0bc;
+            text-shadow: 1px 1px 4px #0a330a;
+        }
+
+        .chakan {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #detailLink {
+            text-decoration: none;
+            background-color: rgba(65, 115, 45, 0.55);
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 12px 35px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #f3ffe6;
+            border: 1.5px solid #b1e09b;
+            box-shadow: 0 4px 12px #1c421c;
+            transition: 0.25s;
+            display: inline-block;
+            text-shadow: 0 2px 4px #073007;
+            letter-spacing: 2px;
+        }
+
+        #detailLink:hover {
+            background-color: rgba(90, 160, 60, 0.8);
+            color: #ffffff;
+            border-color: #e6ffcb;
+            transform: scale(1.02);
+            box-shadow: 0 0 18px #a2d68b;
+            text-decoration: underline;
+            text-underline-offset: 5px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .map-container, .info-card {
+                width: 90%;
+                min-width: 300px;
+            }
+            .navbar nav a {
+                font-size: 18px;
+                margin: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top"> 河南旅游指南 </div>
+
+    <div class="navbar">
+        <nav>
+            <a href="/比赛/index.html/首页.html">首页</a>
+            <a href="/比赛/location.html/位置介绍.html">位置介绍</a>
+            <a href="/比赛/search.html/搜索栏.html" target="_blank">检索</a>
+            <a href="/比赛/other.html/attractions.html">其它</a>
+            <a href="/比赛/us.html/我的.html">关于我们</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <!-- 左侧地图区（新增济源市标签） -->
+        <div class="map-container" id="map">
+            <img src="../素材包/ditu.png" alt="河南地图">
+            <!-- 城市标签 包含济源市 -->
+            <div class="city-label label-zhengzhou" data-city="郑州市">郑州市</div>
+            <div class="city-label label-kaifeng" data-city="开封市">开封市</div>
+            <div class="city-label label-xuchang" data-city="许昌市">许昌市</div>
+            <div class="city-label label-luohe" data-city="漯河市">漯河市</div>
+            <div class="city-label label-pingdingshan" data-city="平顶山市">平顶山市</div>
+            <div class="city-label label-anyang" data-city="安阳市">安阳市</div>
+            <div class="city-label label-hebi" data-city="鹤壁市">鹤壁市</div>
+            <div class="city-label label-xinxiang" data-city="新乡市">新乡市</div>
+            <div class="city-label label-jiaozuo" data-city="焦作市">焦作市</div>
+            <div class="city-label label-puyang" data-city="濮阳市">濮阳市</div>
+            <div class="city-label label-luoyang" data-city="洛阳市">洛阳市</div>
+            <div class="city-label label-sanmenxia" data-city="三门峡市">三门峡市</div>
+            <div class="city-label label-shangqiu" data-city="商丘市">商丘市</div>
+            <div class="city-label label-zhoukou" data-city="周口市">周口市</div>
+            <div class="city-label label-nanyang" data-city="南阳市">南阳市</div>
+            <div class="city-label label-xinyang" data-city="信阳市">信阳市</div>
+            <div class="city-label label-zhumadian" data-city="驻马店市">驻马店市</div>
+            <!-- 新增济源市标签 -->
+            <div class="city-label label-jiyuan" data-city="济源市">济源市</div>
+        </div>
+
+        <!-- 右侧信息卡片 -->
+        <div class="info-card">
+            <div class="card">
+                <h2 id="cityTitle">【郑州市】</h2>
+                <div class="jieshao-city">
+                    <div class="jieshao-city-item">
+                        <span class="jingqu" id="sceneryName">嵩山少林寺景区</span>
+                    </div>
+                    <div class="jieshao-city-item">
+                        <span class="leixing" id="sceneryType">人文历史</span>
+                    </div>
+                    <div class="jieshao-city-item">
+                        <span class="didian" id="sceneryLoc">河南省郑州市登封市</span>
+                    </div>
+                    <div class="chakan">
+                        <a href="/比赛/search.html/搜索栏.html?city=" id="detailLink" target="_blank" > 查看详情</a>
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const cityData = {
+                "郑州市": {
+                    scenery: "嵩山少林寺景区",
+                    type: "人文历史",
+                    location: "河南省郑州市登封市",
+                    url: "/比赛/search.html/搜索栏.html?city=郑州市"
+                },
+                "开封市": {
+                    scenery: "清明上河园",
+                    type: "古镇园林",
+                    location: "河南省开封市龙亭区",
+                    url: "/比赛/search.html/搜索栏.html?city=开封市"
+                },
+                "洛阳市": {
+                    scenery: "龙门石窟",
+                    type: "人文历史",
+                    location: "河南省洛阳市洛龙区",
+                    url: "/比赛/search.html/搜索栏.html?city=洛阳市"
+                },
+                "安阳市": {
+                    scenery: "殷墟博物馆",
+                    type: "人文历史",
+                    location: "河南省安阳市殷都区",
+                    url: "/比赛/search.html/搜索栏.html?city=安阳市"
+                },
+                "鹤壁市": {
+                    scenery: "云梦山（4A）",
+                    type: "自然人文",
+                    location: "河南省鹤壁市淇县",
+                    url: "/比赛/other.html/attractions.html?city=鹤壁市"
+                },
+                "新乡市": {
+                    scenery: "八里沟",
+                    type: "自然山水",
+                    location: "河南省新乡市辉县市",
+                    url: "/比赛/search.html/搜索栏.html?city=新乡市"
+                },
+                "焦作市": {
+                    scenery: "云台山",
+                    type: "自然山水",
+                    location: "河南省焦作市修武县",
+                    url: "/比赛/search.html/搜索栏.html?city=焦作市"
+                },
+                "濮阳市": {
+                    scenery: "中原绿色公园（4A）",
+                    type: "生态公园",
+                    location: "河南省濮阳市华龙区",
+                    url: "/比赛/other.html/attractions.html?city=濮阳市"
+                },
+                "许昌市": {
+                    scenery: "曹魏古城（4A）",
+                    type: "人文历史",
+                    location: "河南省许昌市魏都区",
+                    url: "/比赛/other.html/attractions.html?city=许昌市"
+                },
+                "漯河市": {
+                    scenery: "沙澧河风景区（4A）",
+                    type: "滨水风光",
+                    location: "河南省漯河市市区",
+                    url: "/比赛/other.html/attractions.html?city=漯河市"
+                },
+                "三门峡市": {
+                    scenery: "豫西大峡谷（4A）",
+                    type: "峡谷漂流",
+                    location: "河南省三门峡市卢氏县",
+                    url: "/比赛/other.html/attractions.html?city=三门峡市"
+                },
+                "南阳市": {
+                    scenery: "西峡恐龙遗迹·老界岭",
+                    type: "地质公园",
+                    location: "河南省南阳市西峡县",
+                    url: "/比赛/search.html/搜索栏.html?city=南阳市"
+                },
+                "商丘市": {
+                    scenery: "芒砀山汉文化旅游景区",
+                    type: "人文历史",
+                    location: "河南省商丘市永城市",
+                    url: "/比赛/search.html/搜索栏.html?city=商丘市"
+                },
+                "信阳市": {
+                    scenery: "鸡公山",
+                    type: "自然山水",
+                    location: "河南省信阳市浉河区",
+                    url: "/比赛/search.html/搜索栏.html?city=信阳市"
+                },
+                "周口市": {
+                    scenery: "太昊伏羲陵",
+                    type: "人文始祖",
+                    location: "河南省周口市淮阳区",
+                    url: "/比赛/search.html/搜索栏.html?city=周口市"
+                },
+                "驻马店市": {
+                    scenery: "嵖岈山",
+                    type: "地质奇观",
+                    location: "河南省驻马店市遂平县",
+                    url: "/比赛/search.html/搜索栏.html?city=驻马店市"
+                },
+                "平顶山市": {
+                    scenery: "尧山·中原大佛",
+                    type: "自然风光",
+                    location: "河南省平顶山市鲁山县",
+                    url: "/比赛/search.html/搜索栏.html?city=平顶山市"
+                },
+                "济源市": {
+                    scenery: "王屋山（4A）",
+                    type: "道教名山",
+                    location: "河南省济源市王屋镇",
+                    url: "/比赛/other.html/attractions.html?city=济源市"
+                }
+            };
+
+            // DOM 元素
+            const cityTitle = document.getElementById('cityTitle');
+            const sceneryName = document.getElementById('sceneryName');
+            const sceneryType = document.getElementById('sceneryType');
+            const sceneryLoc = document.getElementById('sceneryLoc');
+            const detailLink = document.getElementById('detailLink');
+
+            // 更新右侧卡片
+            function updateCardByCity(cityName) {
+                if (cityData[cityName]) {
+                    const d = cityData[cityName];
+                    cityTitle.innerText = `【${cityName}】`;
+                    sceneryName.innerText = d.scenery;
+                    sceneryType.innerText = d.type;
+                    sceneryLoc.innerText = d.location;
+                    detailLink.href = d.url;
+                } else {
+                    console.warn('未找到城市数据:', cityName);
+                    // 降级处理
+                    cityTitle.innerText = `【${cityName}】`;
+                    sceneryName.innerText = "即将开放";
+                    sceneryType.innerText = "敬请期待";
+                    sceneryLoc.innerText = "河南 · 更多精彩";
+                    detailLink.href = "/比赛/search.html/搜索栏.html";
+                }
+            }
+
+            // 为所有城市标签绑定悬浮与点击事件
+            const labels = document.querySelectorAll('.city-label');
+            labels.forEach(label => {
+                const city = label.getAttribute('data-city') || label.innerText.trim();
+                // 悬浮展示
+                label.addEventListener('mouseenter', function(e) {
+                    e.stopPropagation();
+                    updateCardByCity(city);
+                });
+                // 点击同样展示
+                label.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    updateCardByCity(city);
+                });
+            });
+
+            // 事件委托保险（防止动态添加）
+            const mapContainer = document.getElementById('map');
+            if (mapContainer) {
+                mapContainer.addEventListener('mouseover', function(e) {
+                    const target = e.target.closest('.city-label');
+                    if (target) {
+                        const city = target.getAttribute('data-city') || target.innerText.trim();
+                        updateCardByCity(city);
+                    }
+                });
+            }
+
+            // 初始化显示郑州
+            updateCardByCity('郑州市');
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4A景点介绍</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* 全局页面样式 */
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background-image: url(../素材包/background2.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; 
+        }
+        /*导航栏*/
+        .top {
+            color: #f0f7e6;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 4px 4px 8px #1b3b1b;
+            text-align: center;
+            letter-spacing: 6px;
+            padding: 15px 0 0;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            padding: 8px 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(3px);
+            border-radius: 60px;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .navbar nav a {
+            margin: 0 15px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ebf5e0;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: all 0.25s ease;
+            border-radius: 30px;
+            text-shadow: 1px 2px 3px #1a3a1a;
+            letter-spacing: 1.5px;
+        }
+
+        .navbar nav a:hover {
+            color: #c8f0a2 !important;
+            text-decoration: underline;
+            text-decoration-color: #b4e484;
+            text-underline-offset: 8px;
+            text-decoration-thickness: 2px;
+            background-color: transparent !important;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px 30px;
+            gap: 20px;
+        }
+        /* ==================== 页面一：横向伸缩图片栏 ==================== */
+        .section1 {
+            height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .shell {
+            width: 80%;
+            height: 500px;
+            display: flex;
+        }
+        .box {
+            flex: 1;
+            overflow: hidden;
+            transition: .5s ease;
+            margin: 0 10px;
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, .3);
+            border-radius: 20px;
+            border: 10px solid #FBFCCD;
+            background-color: #FBFCCD;
+            display: flex;
+            flex-direction: column;
+        }
+        .box > img {
+            width: 200%;
+            height: 100%;
+            object-fit: cover;
+            transition: .5s ease;
+        }
+        .box > span {
+            font: 600 20px sans-serif;
+            color: #64A386;
+            text-align: center;
+            height: 12%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .box:hover {
+            flex-basis: 40%;
+        }
+        .box:hover > img {
+            width: 100%;
+            height: 100%;
+        }
+        /* ==================== 页面二：景点介绍卡片 ==================== */
+        .section2 {
+            padding: 60px 0;
+        }
+        .card {
+            width: 80%;
+            margin: 30px auto;
+            border: 2px solid #cde2e8;
+            border-radius: 10px;
+            padding: 30px;
+            background-image: url(../素材包/A1.jpg);/* 半透明背景 */
+            backdrop-filter: blur(5px); /* 毛玻璃效果（可选） */
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .card-left {
+            flex-direction: row;
+        }
+        .card-right {
+            flex-direction: row-reverse;
+        }
+        .card-img {
+            flex: 0 0 400px;
+            height: 250px;
+            border: 2px dashed #cde2e8;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #d5f8e0;
+        }
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .card-title {
+            font-size: 28px;
+            color: #87a368;
+            font-weight: 600;
+            text-align: center;
+        }
+        .card-subtitle {
+            font-size: 18px;
+            color: #87a368;
+            text-align: center;
+        }
+        .card-desc {
+            font-size: 20px;
+            color: #87a360;
+            line-height: 1.6;
+        }
+         .highlight-card {
+            animation: gentleFlash 1.2s ease-in-out 2;
+            box-shadow: 0 0 0 4px #f9f0b0, 0 0 0 8px rgba(180, 228, 120, 0.6);
+            border-radius: 16px;
+        }
+        @keyframes gentleFlash {
+            0% { background-color: rgba(255, 245, 180, 0.2); border-color: #f5e56b; }
+            50% { background-color: rgba(255, 250, 160, 0.5); border-color: #ffdd88; }
+            100% { background-color: transparent; border-color: #a5f3c5; }
+        }
+        @media (max-width: 900px) {
+            .card { flex-direction: column; width: 95%; }
+            .card-img { flex-basis: auto; width: 100%; height: 200px; }
+            .navbar nav a { font-size: 18px; margin: 0 8px; }
+            .shell { width: 95%; height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top"> 河南旅游指南 </div>
+
+    <div class="navbar">
+        <nav>
+            <a href="/比赛/index.html/首页.html">首页</a>
+            <a href="/比赛/location.html/位置介绍.html">位置介绍</a>
+            <a href="/比赛/search.html/搜索栏.html" target="_blank">检索</a>
+            <a href="/比赛/other.html/attractions.html">其它</a>
+            <a href="/比赛/us.html/我的.html">关于我们</a>
+        </nav>
+    </div>
+
+    <!-- ==================== 第一部分：伸缩图片栏 ==================== -->
+    <div class="section1">
+        <div class="shell">
+            <div class="box">
+                <img src="../素材包/B1.jpg">
+                <span>曹魏古城</span>
+            </div>
+            <div class="box">
+                <img src="../素材包/B2.jpg">
+                <span>云梦山</span>
+            </div>
+            <div class="box">
+                <img src="../素材包/B3.jpg">
+                <span>中原绿色公园</span>
+            </div>
+            <div class="box">
+                <img src="../素材包/B4.jpg">
+                <span>沙澧河风景区</span>
+            </div>
+            <div class="box">
+                <img src="../素材包/B5.jpg">
+                <span>豫西大峡谷</span>
+            </div>
+            <div class="box">
+                <img src="../素材包/B6.jpg">
+                <span>王屋山</span>
+            </div>
+        </div>
+    </div>
+    <!-- ==================== 第二部分：6个景点介绍卡片 ==================== -->
+    <div class="section2">
+        <!-- 1. 曹魏古城 -->
+        <div class="card card-left" data-city="许昌市" id="card-xuchang">
+            <div class="card-img">
+                <img src="../素材包/C1.jpg" alt="曹魏古城">
+            </div>
+            <div class="card-text">
+                <div class="card-title">曹魏古城</div>
+                <div class="card-subtitle">河南省许昌市魏都区</div>
+                <div class="card-desc">
+                    曹魏古城依托深厚的三国历史文化打造，古街建筑古朴典雅，一步一景尽显曹魏风韵。景区融合文化展示、民俗体验、休闲观光于一体，漫步其间仿佛穿越时空，是感受历史底蕴、领略传统风情、了解三国故事的热门文化旅游胜地，极具特色与魅力。
+                </div>
+            </div>
+        </div>
+        <!-- 2. 云梦山 -->
+        <div class="card card-right" data-city="鹤壁市" id="card-hebi">
+            <div class="card-img">
+                <img src="../素材包/C2.jpg" alt="云梦山">
+            </div>
+            <div class="card-text">
+                <div class="card-title">云梦山</div>
+                <div class="card-subtitle">河南省鹤壁市淇县</div>
+                <div class="card-desc">
+                    云梦山山势险峻，风光旖旎，拥有奇特的峡谷、溶洞与山林景观，自然生态保存完好。景区兼具秀丽山水与深厚道教文化，气候凉爽宜人，是登山观景、休闲避暑、徒步探险的理想去处，独特的地貌与人文传说让人流连忘返，美不胜收。
+                </div>
+            </div>
+        </div>
+        <!-- 3. 中原绿色公园 -->
+        <div class="card card-left" data-city="濮阳市" id="card-puyang">
+            <div class="card-img">
+                <img src="../素材包/C6.jpg" alt="中原绿色公园">
+            </div>
+            <div class="card-text">
+                <div class="card-title">中原绿色公园</div>
+                <div class="card-subtitle">河南省濮阳市华龙区</div>
+                <div class="card-desc">
+                    中原绿色公园绿意盎然，花海、草坪、林木相映成趣，环境清新舒适。作为城市生态休闲空间，公园设施完善，景色宜人，为市民提供了亲近自然、放松身心的好去处，是喧嚣城市中的一片宁静绿洲，休闲散步与拍照打卡两相宜。
+                </div>
+            </div>
+        </div>
+        <!-- 4. 沙澧河风景区 -->
+        <div class="card card-right" data-city="漯河市" id="card-luohe">
+            <div class="card-img">
+                <img src="../素材包/C3.jpg" alt="沙澧河风景区">
+            </div>
+            <div class="card-text">
+                <div class="card-title">沙澧河风景区</div>
+                <div class="card-subtitle">河南省漯河市市区</div>
+                <div class="card-desc">
+                    沙澧河风景区依河而建，碧水潺潺，绿树成荫，岸线风景秀丽绵长。景区打造了完善的休闲步道与观景节点，兼具生态风光与休闲功能，空气清新、视野开阔，是散步、健身、观景的绝佳选择，尽显城市滨水生态之美，舒适又惬意。
+                </div>
+            </div>
+        </div>
+        <!-- 5. 豫西大峡谷 -->
+        <div class="card card-left" data-city="三门峡市" id="card-sanmenxia">
+            <div class="card-img">
+                <img src="../素材包/C4 .jpg" alt="豫西大峡谷">
+            </div>
+            <div class="card-text">
+                <div class="card-title">豫西大峡谷</div>
+                <div class="card-subtitle">河南省三门峡市卢氏县</div>
+                <div class="card-desc">
+                    豫西大峡谷以雄奇险峻的峡谷景观与壮观飞瀑流泉闻名，山水相依，景色壮美。景区内溪流清澈，植被茂密，惊险刺激的漂流项目深受游客喜爱，是夏季避暑玩水、探险观光、享受自然野趣的热门景区，体验感十足。
+                </div>
+            </div>
+        </div>
+        <!-- 6. 王屋山 -->
+        <div class="card card-right" data-city="济源市" id="card-jiyuan">
+            <div class="card-img">
+                <img src="../素材包/C5.jpg" alt="王屋山" >
+            </div>
+            <div class="card-text">
+                <div class="card-title">王屋山</div>
+                <div class="card-subtitle">河南省济源市王屋镇</div>
+                <div class="card-desc">
+                    王屋山是国家级道教名山，山势雄伟壮观，森林覆盖率高，自然风光秀丽。景区融合神话传说与传统文化，人文底蕴深厚，是登山祈福、徒步游览、感受道家文化与自然美景的胜地，意境悠远，令人心旷神怡。
+                </div>
+            </div>
+        </div>
+        </div>
+        <script>
+    (function() {
+        // 获取URL参数 ?city=xxx
+        function getCityFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('city');
+        }
+
+        const targetCity = getCityFromUrl();
+        if (targetCity) {
+            // 找到对应 data-city 的卡片
+            const targetCard = document.querySelector(`.card[data-city="${targetCity}"]`);
+            if (targetCard) {
+                // 延迟滚动，确保页面渲染完成
+                setTimeout(() => {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.classList.add('highlight-card');
+                    // 高亮后移除效果，以免一直闪烁
+                    setTimeout(() => {
+                        targetCard.classList.remove('highlight-card');
+                    }, 2400);
+                }, 300);
+            } else {
+                console.warn(`未找到城市卡片: ${targetCity}`);
+            }
+        }
+    })();
+</script>    
+</body>
+</html>

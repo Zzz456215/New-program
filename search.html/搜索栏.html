@@ -1,0 +1,359 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>检索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            background-image: url(../素材包/background2.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 20px;
+        }
+        /* 导航栏*/
+        .page-header {
+            background-color: transparent; 
+            padding: 25px 0;
+            text-align: center;
+        }
+
+        .top-title {
+            color: #f0f7e6;
+            font-size: 28px; 
+            font-weight: 700;
+            text-shadow: 4px 4px 8px #1b3b1b;
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar nav a {
+            margin: 0 30px;
+            font-size: 24px; 
+            font-weight: 600;
+            color: #ebf5e0;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: all 0.25s ease;
+            border-radius: 30px;
+            text-shadow: 1px 2px 3px #1a3a1a;
+            letter-spacing: 3px;
+        }
+
+        .navbar nav a:hover {
+            color: #c8f0a2 !important;
+            text-decoration: underline;
+            text-decoration-color: #b4e484;
+            text-underline-offset: 10px;
+            text-decoration-thickness: 3px;
+        }
+        /*头部*/
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 10px 0;
+        }
+
+        .back-icon {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .back-icon a{
+            text-decoration: none;
+            color: #28a745;
+        }
+
+        .filter-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto 25px;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background-color: transparent;
+            border-radius: 8px;
+            border: 2.5px solid #87c1aa;
+            box-shadow: 0 15px 30px rgba(20, 70, 10, 0.3), inset 0 0 20px rgba(150, 220, 120, 0.1);
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .filter-item select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 150px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .filter-item select:focus{
+            border-color: #28a745;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-box input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 220px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .search-box input:focus{
+            border-color: #28a745;
+        }
+
+        .search-box button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .search-box button:hover{
+           background-color: #d1fae5;
+        }
+        .scenic-name:hover {
+            color: #065f46 !important;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        #scenicTable {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        #scenicTable thead tr {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        #scenicTable th,
+        #scenicTable td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        #scenicTable tbody tr {
+            cursor: pointer; /* 鼠标变成小手，提示可点击 */
+        }
+
+        #scenicTable tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="top-title">河南旅游指南</div>
+        <div class="navbar">
+            <nav>
+                <a href="/比赛/index.html/首页.html">首页</a>
+                <a href="/比赛/location.html/位置介绍.html">位置介绍</a>
+                <a href="/比赛/search.html/搜索栏.html" target="_blank">检索</a>
+                <a href="/比赛/other.html/attractions.html">其它</a>
+                <a href="/比赛/us.html/我的.html">关于我们</a>
+            </nav>
+        </div>
+    </div>
+<div class="filter-container">
+    <div class="filter-item">
+        <label>所属市：</label>
+        <select id="citySelect">
+            <option value="全部">全部</option>
+            <option value="郑州市">郑州市</option>
+            <option value="洛阳市">洛阳市</option>
+            <option value="开封市">开封市</option>
+            <option value="平顶山市">平顶山市</option>
+            <option value="安阳市">安阳市</option>
+            <option value="焦作市">焦作市</option>
+            <option value="商丘市">商丘市</option>
+            <option value="南阳市">南阳市</option>
+            <option value="驻马店市">驻马店市</option>
+            <option value="信阳市">信阳市</option>
+            <option value="周口市">周口市</option>
+            <option value="新乡市">新乡市</option>
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label>类型：</label>
+        <select id="typeSelect">
+            <option value="全部">全部</option>
+            <option value="自然山水">自然山水</option>
+            <option value="人文历史">人文历史</option>
+            <option value="红色文化">红色文化</option>
+            <option value="地质公园">地质公园</option>
+            <option value="古镇园林">古镇园林</option>
+        </select>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="输入景区名称搜索">
+        <button id="searchBtn">搜索</button>
+    </div>
+</div>
+
+<div class="table-container">
+    <table id="scenicTable">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>景区名称</th>
+                <th>所属市</th>
+                <th>所属县区</th>
+                <th>所属类型</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script>
+const scenicData = [
+    { id: 1, name: "嵩山少林景区", city: "郑州市", county: "登封市", type: "人文历史", url: "../详情页/1.html" },
+    { id: 2, name: "龙门石窟景区", city: "洛阳市", county: "洛龙区", type: "人文历史", url: "../详情页/2.html" },
+    { id: 3, name: "老君山·鸡冠洞旅游区", city: "洛阳市", county: "栾川县", type: "自然山水", url: "../详情页/3.html" },
+    { id: 4, name: "白云山景区", city: "洛阳市", county: "栾川县", type: "自然山水", url: "../详情页/4.html" },
+    { id: 5, name: "龙潭大峡谷景区", city: "洛阳市", county: "新安县", type: "地质公园", url: "../详情页/5.html" },
+    { id: 6, name: "清明上河园景区", city: "开封市", county: "龙亭区", type: "古镇园林", url: "../详情页/6.html" },
+    { id: 7, name: "尧山·中原大佛景区", city: "平顶山市", county: "鲁山县", type: "自然山水", url: "../详情页/7.html" },
+    { id: 8, name: "殷墟景区", city: "安阳市", county: "殷都区", type: "人文历史", url: "../详情页/8.html" },
+    { id: 9, name: "红旗渠·太行大峡谷旅游区", city: "安阳市", county: "林州市", type: "红色文化", url: "../详情页/9.html" },
+    { id: 10, name: "云台山景区", city: "焦作市", county: "修武县", type: "自然山水", url: "../详情页/10.html" },
+    { id: 11, name: "神农山景区", city: "焦作市", county: "沁阳市", type: "自然山水", url: "../详情页/11.html" },
+    { id: 12, name: "青天河景区", city: "焦作市", county: "博爱县", type: "自然山水", url: "../详情页/12.html" },
+    { id: 13, name: "芒砀山汉文化旅游景区", city: "商丘市", county: "永城市", type: "人文历史", url: "../详情页/13.html" },
+    { id: 14, name: "西峡恐龙遗迹园·老界岭", city: "南阳市", county: "西峡县", type: "地质公园", url: "../详情页/14.html" },
+    { id: 15, name: "嵖岈山旅游景区", city: "驻马店市", county: "遂平县", type: "自然山水", url: "../详情页/15.html" },
+    { id: 16, name: "鸡公山景区", city: "信阳市", county: "浉河区", type: "自然山水", url: "../详情页/16.html" },
+    { id: 17, name: "太昊伏羲陵文化旅游区", city: "周口市", county: "淮阳区", type: "人文历史", url: "../详情页/17.html" },
+    { id: 18, name: "八里沟景区", city: "新乡市", county: "辉县市", type: "自然山水", url: "../详情页/18.html" },
+    { id: 19, name: "宝泉旅游区", city: "新乡市", county: "辉县市", type: "自然山水", url: "../详情页/19.html" }
+];
+
+let list = [...scenicData];
+   window.onload = function () {
+    // 👇 新加：从链接读取城市并自动选中
+    const params = new URLSearchParams(location.search);
+    const cityFromUrl = params.get('city');
+    if (cityFromUrl) document.getElementById('citySelect').value = cityFromUrl;
+
+    renderTable(list);
+    bindEvents();
+    doFilter(); // 自动执行一次筛选
+};
+function bindEvents() {
+    const city = document.getElementById("citySelect");
+    const type = document.getElementById("typeSelect");
+    const searchBtn = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+
+    city.addEventListener("change", doFilter);
+    type.addEventListener("change", doFilter);
+    searchBtn.addEventListener("click", doFilter);
+    searchInput.addEventListener("input", doFilter);
+    searchInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") doFilter();
+    });
+}
+
+function doFilter() {
+    const cityVal = document.getElementById("citySelect").value;
+    const typeVal = document.getElementById("typeSelect").value;
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+
+    let result = scenicData.filter(item => {
+        const okCity = cityVal === "全部" || item.city === cityVal;
+        const okType = typeVal === "全部" || item.type === typeVal;
+        const okName = keyword === "" || item.name.toLowerCase().includes(keyword);
+        return okCity && okType && okName;
+    });
+
+    list = result;
+    renderTable(list);
+}
+
+function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding:30px; color:#999">暂无匹配数据</td></tr>`;
+        return;
+    }
+
+    data.forEach((item, i) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td><span class="scenic-name">${item.name}</span></td>
+            <td>${item.city}</td>
+            <td>${item.county}</td>
+            <td>${item.type}</td>
+        `;
+        
+        //  这里改成了【新开标签页】
+        tr.onclick = function () {
+            window.open(item.url, '_blank');
+        };
+        
+        tbody.appendChild(tr);
+    });
+}
+</script>
+</body>
+</html>
